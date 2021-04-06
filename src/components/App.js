@@ -10,6 +10,7 @@ class App extends React.Component {
         this.state = {
             todos: todosData,
             inputText: "",
+            url: ""
         }
         this.textInput = React.createRef()
         this.handleSubmit = this.handleSubmit.bind(this)
@@ -42,6 +43,7 @@ class App extends React.Component {
         })
     }
     handleClick(e, inputText) {
+        // add new task
         if(inputText) {
             // 1. Make a shallow copy of the items
             let items = [...this.state.todos]
@@ -54,7 +56,24 @@ class App extends React.Component {
             // 4. Put it back into our array. N.B. we *are* mutating the array here, but that's why we made a copy first
             items[items.length] = item
             // 5. Set the state to our new copy
-            this.setState({todos: items})
+            return this.setState({todos: items})
+        }
+        /* Save todo list */
+        // remove task
+        const todoItems = this.state.todos.filter(item => !item.completed ? item : false)
+        if(todoItems.length !== this.state.todos.length) {
+            // fetch random meme
+            const fetchURL = async () => {
+                try {
+                    const res = await fetch("https://meme-api.herokuapp.com/gimme")
+                    const data = await res.json()
+                    await this.setState({todos: todoItems, url: data.url}) // update DOM
+                }
+                catch {
+                    console.log("bzzz 🐝")
+                }
+            }
+            fetchURL()
         }
     }
 
@@ -67,7 +86,7 @@ class App extends React.Component {
                 <main>
                     <form className="todo-list" onSubmit={this.handleSubmit}>
                         {todoItems}
-                        <button>save</button> {/* cs - custom style*/}
+                        <button onClick={this.handleClick}>save</button> {/* cs - custom style*/}
                     </form>
 
                     <form className="todo-list" onSubmit={this.handleSubmit}>
@@ -80,7 +99,18 @@ class App extends React.Component {
                         />
                         <button onClick={e => this.handleClick(e, this.state.inputText)}>add</button>
                         </section>
-                    </form>
+                    </form><br /><br />
+                    <section className="memeCon">
+                        <span className="memeHol">
+                            <h2>Fetch Rand Meme</h2>
+                            {this.state.url
+                             ?
+                                <img id="meme" src={this.state.url} />
+                             :
+                                null
+                            }
+                        </span>
+                    </section>
                 </main>
             </div>
         )
@@ -90,38 +120,19 @@ class App extends React.Component {
 export default App
 
 /*
-handleClick(clickOption, e) {
-    switch(clickOption) {
-        case "add":
-            if(this.state.newTodoItem) {
-                // 1. Make a shallow copy of the items
-                let items = [...this.state.todos];
-                // 2. Make a shallow copy of the item you want to mutate
-                let item = {...items[items.length-1]};
-                // 3. Replace the property you're intested in
-                item.id = item.id+1
-                item.text = this.textInput // target is button not input element
-                item.completed = false
-
-                // 4. Put it back into our array. N.B. we *are* mutating the array here, but that's why we made a copy first
-                // items[1] = item;
-                console.log(items);
-                console.log(item);
-                console.log(e.target);
-                // 5. Set the state to our new copy
-                // this.setState({items});
-            }
-        break;
-        case "save":
-            this.setState(prevState => {
-                return {
-                    ...prevState,
-                    isSaving: !prevState.isSaving
-                }
-        })
-        break;
-        default:
-            return null
-    }
-}
+// save task to filesystem
+let data = ["todosData = " + JSON.stringify(this.state.todos) + " export default todosData"],
+    filename = "todosData.js",
+    type = "application/javascript",
+    file = new Blob(data, {type: type}),
+    a = document.createElement("a"),
+    url = URL.createObjectURL(file)
+a.href = url
+a.download = filename
+document.body.appendChild(a)
+a.click()
+setTimeout(function() {
+    document.body.removeChild(a)
+    window.URL.revokeObjectURL(url)
+}, 0);
 */
