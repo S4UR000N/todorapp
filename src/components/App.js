@@ -90,7 +90,7 @@ class App extends React.Component {
                 <main>
                     <form className="todo-list" onSubmit={this.handleSubmit}>
                         {todoItems}
-                        <button onClick={this.handleClick}>save</button> {/* cs - custom style*/}
+                        <button className="btn btn-primary saveBtn" onClick={this.handleClick}>save</button> {/* cs - custom style*/}
                     </form>
 
                     <form className="todo-list" onSubmit={this.handleSubmit}>

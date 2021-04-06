@@ -9,7 +9,7 @@ function AddTodoItem(props) {
                 value={props.state.inputText}
                 onChange={e => props.handleChange(e)}
             />
-            <button onClick={e => props.handleClick(e, props.state.inputText)}>add</button>
+            <button className="btn btn-primary btn-sm addBtn" onClick={e => props.handleClick(e, props.state.inputText)}>add</button>
         </section>
     )
 }
