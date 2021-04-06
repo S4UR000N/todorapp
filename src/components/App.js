@@ -1,5 +1,8 @@
 import React from 'react';
 import TodoItem from "./TodoItem"
+import Image from "./Image"
+import AddTodoItem from "./AddTodoItem"
+
 import todosData from "./../todosData"
 import './App.css';
 
@@ -56,7 +59,7 @@ class App extends React.Component {
             // 4. Put it back into our array. N.B. we *are* mutating the array here, but that's why we made a copy first
             items[items.length] = item
             // 5. Set the state to our new copy
-            return this.setState({todos: items})
+            return this.setState({todos: items, inputText: ""})
         }
         /* Save todo list */
         // remove task
@@ -68,6 +71,7 @@ class App extends React.Component {
                     const res = await fetch("https://meme-api.herokuapp.com/gimme")
                     const data = await res.json()
                     await this.setState({todos: todoItems, url: data.url}) // update DOM
+                    console.log(data);
                 }
                 catch {
                     console.log("bzzz 🐝")
@@ -90,27 +94,14 @@ class App extends React.Component {
                     </form>
 
                     <form className="todo-list" onSubmit={this.handleSubmit}>
-                        <section>
-                        <input
-                            type="text"
-                            name="inputText"
-                            value={this.state.inputText}
-                            onChange={e => this.handleChange(e)}
+                        <AddTodoItem
+                            state={this.state}
+                            handleChange={this.handleChange}
+                            handleClick={this.handleClick}
                         />
-                        <button onClick={e => this.handleClick(e, this.state.inputText)}>add</button>
-                        </section>
                     </form><br /><br />
-                    <section className="memeCon">
-                        <span className="memeHol">
-                            <h2>Fetch Rand Meme</h2>
-                            {this.state.url
-                             ?
-                                <img id="meme" src={this.state.url} />
-                             :
-                                null
-                            }
-                        </span>
-                    </section>
+                    <Image url={this.state.url} />
+
                 </main>
             </div>
         )
